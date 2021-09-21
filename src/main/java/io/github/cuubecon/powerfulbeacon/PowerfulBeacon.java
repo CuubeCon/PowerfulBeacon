@@ -3,6 +3,7 @@ package io.github.cuubecon.powerfulbeacon;
 import io.github.cuubecon.powerfulbeacon.block.ModBlocks;
 import io.github.cuubecon.powerfulbeacon.container.ModContainers;
 import io.github.cuubecon.powerfulbeacon.item.ModItems;
+import io.github.cuubecon.powerfulbeacon.network.PowerfulBeaconPacketHandler;
 import io.github.cuubecon.powerfulbeacon.screen.PowerfulBeaconScreen;
 import io.github.cuubecon.powerfulbeacon.tileentity.ModTileEntitys;
 import io.github.cuubecon.powerfulbeacon.tileentity.PowerfulBeaconTileRenderer;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 public class PowerfulBeacon
 {
     public static final String MODID = "powerfulbeacon";
+    public  static final String NAME = "Powerful Beacon";
 
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
@@ -48,7 +50,7 @@ public class PowerfulBeacon
         ModBlocks.register(modEventBus);
         ModTileEntitys.register(modEventBus);
         ModContainers.register(modEventBus);
-
+        PowerfulBeaconPacketHandler.register();
         // Register the setup method for modloading
         modEventBus.addListener(this::setup);
         // Register the enqueueIMC method for modloading

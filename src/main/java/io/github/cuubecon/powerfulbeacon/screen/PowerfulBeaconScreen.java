@@ -1,6 +1,8 @@
 package io.github.cuubecon.powerfulbeacon.screen;
 
 import io.github.cuubecon.powerfulbeacon.PowerfulBeacon;
+import io.github.cuubecon.powerfulbeacon.network.PowerfulBeaconPacketHandler;
+import io.github.cuubecon.powerfulbeacon.network.cUpdatePowerfulBeaconPacket;
 import io.github.cuubecon.powerfulbeacon.container.PowerfulBeaconContainer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -17,7 +19,6 @@ import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.play.client.CCloseWindowPacket;
-import net.minecraft.network.play.client.CUpdateBeaconPacket;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.BeaconTileEntity;
@@ -216,7 +217,7 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
         }
 
         public void onPress() {
-            PowerfulBeaconScreen.this.minecraft.getConnection().send(new CUpdateBeaconPacket(Effect.getId(PowerfulBeaconScreen.this.primary), Effect.getId(PowerfulBeaconScreen.this.secondary)));
+            PowerfulBeaconPacketHandler.INSTANCE.sendToServer(new cUpdatePowerfulBeaconPacket(Effect.getId(PowerfulBeaconScreen.this.primary), Effect.getId(PowerfulBeaconScreen.this.secondary)));
             PowerfulBeaconScreen.this.minecraft.player.connection.send(new CCloseWindowPacket(PowerfulBeaconScreen.this.minecraft.player.containerMenu.containerId));
             PowerfulBeaconScreen.this.minecraft.setScreen((Screen)null);
         }
