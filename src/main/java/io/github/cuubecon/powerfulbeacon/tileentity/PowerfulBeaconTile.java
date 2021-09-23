@@ -3,15 +3,16 @@ package io.github.cuubecon.powerfulbeacon.tileentity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import io.github.cuubecon.powerfulbeacon.container.PowerfulBeaconContainer;
+import io.github.cuubecon.powerfulbeacon.util.ModTags;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.monster.ZombifiedPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.BeaconContainer;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
@@ -88,7 +89,8 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
             return 3;
         }
     };
-    private int goldlevels = 0;
+    private int glowlevels = 0;
+    private int gildedlevels = 0;
 
 
     public PowerfulBeaconTile(TileEntityType<?> tileEntityTypeIn) {
@@ -158,6 +160,10 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                 this.applyEffects();
                 this.playSound(SoundEvents.BEACON_AMBIENT);
             }
+            if(this.glowlevels > 0 || this.gildedlevels > 0)
+            {
+                this.applyCustomEffects();
+            }
         }
 
         if (this.lastCheckY >= l) {
@@ -204,33 +210,64 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                 break;
             }
         }
-        checkGoldBase(p_213927_1_, p_213927_2_, p_213927_3_);
+        checkCustomBase(p_213927_1_, p_213927_2_, p_213927_3_);
     }
 
-    private void checkGoldBase(int p_213927_1_, int p_213927_2_, int p_213927_3_) {
+    private void checkCustomBase(int p_213927_1_, int p_213927_2_, int p_213927_3_) {
 
-        this.goldlevels = 0;
-        for(int i = 1; i <= 4;  this.goldlevels = i++) {
-            int j = p_213927_2_ - i;
-            if (j < 0) {
-                break;
-            }
 
-            boolean flag = true;
+        BlockState blockUnderBeacon = this.level.getBlockState(new BlockPos(p_213927_1_, p_213927_2_-1, p_213927_3_));
+        if(blockUnderBeacon.is(ModTags.Blocks.POWERFUL_BEACON_BASE_BLOCKS))
+        {
+            System.out.println(blockUnderBeacon);
+            Block blockToCheck;
+            int levelsToAdd = 0;
+           if(blockUnderBeacon.is(Blocks.GLOWSTONE))
+           {
+                blockToCheck = Blocks.GLOWSTONE;
+           }
+           else if(blockUnderBeacon.is(Blocks.GILDED_BLACKSTONE))
+           {
+                blockToCheck = Blocks.GILDED_BLACKSTONE;
+           }
+           else
+           {
+               return;
+           }
+            for(int i = 1; i <= 4;  levelsToAdd = i++)
+            {
+                int j = p_213927_2_ - i;
+                if (j < 0) {
+                    break;
+                }
 
-            for(int k = p_213927_1_ - i; k <= p_213927_1_ + i && flag; ++k) {
-                for(int l = p_213927_3_ - i; l <= p_213927_3_ + i; ++l) {
-                    if (!this.level.getBlockState(new BlockPos(k, j, l)).is(Blocks.GOLD_BLOCK)) {
-                        flag = false;
-                        break;
+                boolean flag = true;
+
+                for(int k = p_213927_1_ - i; k <= p_213927_1_ + i && flag; ++k) {
+                    for(int l = p_213927_3_ - i; l <= p_213927_3_ + i; ++l) {
+                        if (!this.level.getBlockState(new BlockPos(k, j, l)).is(blockToCheck)) {
+                            flag = false;
+                            break;
+                        }
                     }
+                }
+
+                if (!flag) {
+                    break;
                 }
             }
 
-            if (!flag) {
-                break;
+            if(blockUnderBeacon.is(Blocks.GLOWSTONE))
+            {
+                this.glowlevels = levelsToAdd;
+            }
+            else if(blockUnderBeacon.is(Blocks.GILDED_BLACKSTONE))
+            {
+                System.out.println(levelsToAdd);
+                this.gildedlevels = levelsToAdd;
             }
         }
+
     }
 
     @Override
@@ -245,20 +282,41 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         super.setRemoved();
     }
 
-    private void applyEffects() {
-
-        if(this.goldlevels >= 0 && !this.level.isClientSide)
+    private void applyCustomEffects()
+    {
+        System.out.println("GILD LEVELS " + gildedlevels);
+        if(this.glowlevels > 0 && !this.level.isClientSide)
         {
-            double d0 = (double)(this.levels * 10 + 10);
-            int j = (9 + this.goldlevels * 2) * 20;
+           // System.out.println(glowlevels);
+            double d0 = this.levels * 10 + 10;
+            int j = (9 + this.glowlevels * 2) * 20;
             AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
 
             List<LivingEntity> entities = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
             for (LivingEntity entity : entities) {
-                entity.addEffect(new EffectInstance(Effects.GLOWING,j, 0, true,true));
+                if(!(entity instanceof PlayerEntity))
+                    entity.addEffect(new EffectInstance(Effects.GLOWING,j, 0, true,true));
             }
 
         }
+        else if (this.gildedlevels > 0 && !this.level.isClientSide)
+        {
+
+            double d0 = this.levels * 10 + 10;
+            int j = (9 + this.gildedlevels * 2) * 20;
+            AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
+
+            List<LivingEntity> entities = this.level.getEntitiesOfClass(ZombifiedPiglinEntity.class, axisalignedbb);
+            for (LivingEntity entity : entities) {
+
+                entity.setHealth(0F);
+            }
+        }
+    }
+
+    private void applyEffects() {
+
+
         if (!this.level.isClientSide && this.primaryPower != null) {
             double d0 = (double)(this.levels * 10 + 10);
             int i = 0;
@@ -322,6 +380,8 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
     @Override
     public void load(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
         super.load(p_230337_1_, p_230337_2_);
+        this.glowlevels = p_230337_2_.getInt("GlowLevels");
+        this.gildedlevels = p_230337_2_.getInt("GildedLevels");
         this.primaryPower = getValidEffectById(p_230337_2_.getInt("Primary"));
         this.secondaryPower = getValidEffectById(p_230337_2_.getInt("Secondary"));
         if (p_230337_2_.contains("CustomName", 8)) {
@@ -337,6 +397,8 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         p_189515_1_.putInt("Primary", Effect.getId(this.primaryPower));
         p_189515_1_.putInt("Secondary", Effect.getId(this.secondaryPower));
         p_189515_1_.putInt("Levels", this.levels);
+        p_189515_1_.putInt("GlowLevels", this.glowlevels);
+        p_189515_1_.putInt("GildedLevels", this.gildedlevels);
         if (this.name != null) {
             p_189515_1_.putString("CustomName", ITextComponent.Serializer.toJson(this.name));
         }
