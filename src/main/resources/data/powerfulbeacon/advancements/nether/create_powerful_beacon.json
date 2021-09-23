@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:nether/summon_wither",
+  "display": {
+    "icon": {
+      "item": "powerfulbeacon:powerful_beacon"
+    },
+    "title": {
+      "translate": "advancements.nether.create_powerful_beacon.title"
+    },
+    "description": {
+      "translate": "advancements.nether.create_powerful_beacon.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "powerfulbeacon": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "block": "powerfulbeacon:powerful_beacon",
+        "item": {
+          "items": ["powerfulbeacon:powerful_beacon"]
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "powerfulbeacon"
+    ]
+  ]
+}

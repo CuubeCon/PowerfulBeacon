@@ -1,5 +1,7 @@
 {
   "block.powerfulbeacon.powerful_beacon": "Powerful Beacon",
   "screen.powerfulbeacon.powerful_beacon": "Powerful Beacon",
-  "container.powerfulbeacon.powerful_beacon" : "Powerful Beacon"
+  "container.powerfulbeacon.powerful_beacon" : "Powerful Beacon",
+  "advancements.nether.create_powerful_beacon.title" : "A Beacon, just better",
+  "advancements.nether.create_powerful_beacon.description": "Construct and Place a Powerful Beacon"
 }
