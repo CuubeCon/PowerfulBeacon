@@ -8,6 +8,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.tileentity.BeaconTileEntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.ZombifiedPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -66,7 +67,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                     return 0;
             }
         }
-
+        //BeaconTileEntityRenderer
         public void set(int p_221477_1_, int p_221477_2_) {
             switch(p_221477_1_) {
                 case 0:
@@ -121,6 +122,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         int l = this.level.getHeight(Heightmap.Type.WORLD_SURFACE, i, k);
 
         for(int i1 = 0; i1 < 10 && blockpos.getY() <= l; ++i1) {
+
             BlockState blockstate = this.level.getBlockState(blockpos);
             Block block = blockstate.getBlock();
             float[] afloat = blockstate.getBeaconColorMultiplier(this.level, blockpos, getBlockPos());
@@ -137,12 +139,12 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                     }
                 }
             } else {
-                if (beacontileentity$beamsegment == null || blockstate.getLightBlock(this.level, blockpos) >= 15 && block != Blocks.BEDROCK) {
-                    this.checkingBeamSections.clear();
+                if (beacontileentity$beamsegment == null ||  block != Blocks.AIR  || blockstate.getLightBlock(this.level, blockpos) >= 15 && block != Blocks.BEDROCK) {
+                    //this.checkingBeamSections.clear();
+                    //System.out.println("BEAM SIZE" + this.checkingBeamSections.size());
                     this.lastCheckY = l;
                     break;
                 }
-
                 beacontileentity$beamsegment.increaseHeight();
             }
 
@@ -151,6 +153,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         }
 
         int j1 = this.levels;
+
         if (this.level.getGameTime() % 80L == 0L) {
             if (!this.beamSections.isEmpty()) {
                 this.updateBase(i, j, k);
@@ -347,7 +350,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
 
     @OnlyIn(Dist.CLIENT)
     public List<PowerfulBeaconTile.BeamSegment> getBeamSections() {
-        return (List<PowerfulBeaconTile.BeamSegment>)(this.levels == 0 ? ImmutableList.of() : this.beamSections);
+        return (List<PowerfulBeaconTile.BeamSegment>)((this.levels == 0 && this.gildedlevels == 0 && this.glowlevels == 0 )? ImmutableList.of() : this.beamSections);
     }
 
     public int getLevels() {

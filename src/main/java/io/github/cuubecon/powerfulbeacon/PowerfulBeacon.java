@@ -12,6 +12,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.tileentity.BeaconTileEntityRenderer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -75,7 +76,7 @@ public class PowerfulBeacon
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
 
-
+        //BeaconTileEntityRenderer
         ClientRegistry.bindTileEntityRenderer(ModTileEntitys.POWERFUL_BEACON_TILE.get(), PowerfulBeaconTileRenderer::new);
         ScreenManager.register(ModContainers.POWERFUL_BEACON_CONTAINER.get(), PowerfulBeaconScreen::new);
         RenderTypeLookup.setRenderLayer(ModBlocks.POWERFUL_BEACON.get(), RenderType.cutout());

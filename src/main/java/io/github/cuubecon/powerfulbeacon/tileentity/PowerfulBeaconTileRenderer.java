@@ -26,10 +26,12 @@ public class PowerfulBeaconTileRenderer extends TileEntityRenderer<PowerfulBeaco
 
     public void render(PowerfulBeaconTile p_225616_1_, float p_225616_2_, MatrixStack p_225616_3_, IRenderTypeBuffer p_225616_4_, int p_225616_5_, int p_225616_6_) {
         long i = p_225616_1_.getLevel().getGameTime();
+
         List<PowerfulBeaconTile.BeamSegment> list = p_225616_1_.getBeamSections();
         int j = 0;
 
         for(int k = 0; k < list.size(); ++k) {
+
             PowerfulBeaconTile.BeamSegment beacontileentity$beamsegment = list.get(k);
             renderBeaconBeam(p_225616_3_, p_225616_4_, p_225616_2_, i, j, k == list.size() - 1 ? 1024 : beacontileentity$beamsegment.getHeight(), beacontileentity$beamsegment.getColor());
             j += beacontileentity$beamsegment.getHeight();
