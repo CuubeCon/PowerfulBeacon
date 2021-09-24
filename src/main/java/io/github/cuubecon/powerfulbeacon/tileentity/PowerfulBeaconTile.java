@@ -95,6 +95,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
     private int gildedlevels = 0;
     private int nightvisionlevels = 0;
     private int safevilligarlevels = 0;
+    private int haybewlevels = 0;
 
     public PowerfulBeaconTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -165,7 +166,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                 this.applyEffects();
                 this.playSound(SoundEvents.BEACON_AMBIENT);
             }
-            if(this.glowlevels > 0 || this.gildedlevels > 0 || this.nightvisionlevels > 0 || this.safevilligarlevels > 0)
+            if(this.glowlevels > 0 || this.gildedlevels > 0 || this.nightvisionlevels > 0 || this.safevilligarlevels > 0 || this.haybewlevels > 0)
             {
                 this.applyCustomEffects();
             }
@@ -243,6 +244,10 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
            {
                blockToCheck = Blocks.CRYING_OBSIDIAN;
            }
+           else if(blockUnderBeacon.is(Blocks.HAY_BLOCK))
+           {
+               blockToCheck = Blocks.HAY_BLOCK;
+           }
            else
            {
                return;
@@ -285,6 +290,10 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
             else if(blockUnderBeacon.is(Blocks.CRYING_OBSIDIAN))
             {
                 this.safevilligarlevels = levelsToAdd;
+            }
+            else if(blockUnderBeacon.is(Blocks.HAY_BLOCK))
+            {
+                this.haybewlevels = levelsToAdd;
             }
         }
 
@@ -359,6 +368,19 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                 entity.invulnerableTime = j;
             }
         }
+        else if (this.haybewlevels > 0 && !this.level.isClientSide)
+        {
+
+            double d0 = this.levels * 10 + 10;
+            int j = (9 + this.haybewlevels * 2) * 20;
+            AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
+
+            List<PlayerEntity> entities = this.level.getEntitiesOfClass(PlayerEntity.class, axisalignedbb);
+            for (PlayerEntity entity : entities)
+            {
+                entity.addEffect(new EffectInstance(Effects.SATURATION,j, 0, true,true));
+            }
+        }
     }
 
     private void applyEffects() {
@@ -394,7 +416,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
 
     @OnlyIn(Dist.CLIENT)
     public List<PowerfulBeaconTile.BeamSegment> getBeamSections() {
-        return (List<PowerfulBeaconTile.BeamSegment>)((this.levels == 0 && this.gildedlevels == 0 && this.glowlevels == 0 && this.nightvisionlevels == 0 && this.safevilligarlevels == 0)? ImmutableList.of() : this.beamSections);
+        return (List<PowerfulBeaconTile.BeamSegment>)((this.levels == 0 && this.gildedlevels == 0 && this.glowlevels == 0 && this.nightvisionlevels == 0 && this.safevilligarlevels == 0 && this.haybewlevels == 0)? ImmutableList.of() : this.beamSections);
     }
 
     public int getLevels() {
@@ -431,6 +453,8 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         this.gildedlevels = p_230337_2_.getInt("GildedLevels");
         this.nightvisionlevels = p_230337_2_.getInt("NightvisionLevels");
         this.safevilligarlevels = p_230337_2_.getInt("SafeVilligarLevels");
+        this.haybewlevels = p_230337_2_.getInt("HaybewLevels");
+
         this.primaryPower = getValidEffectById(p_230337_2_.getInt("Primary"));
         this.secondaryPower = getValidEffectById(p_230337_2_.getInt("Secondary"));
         if (p_230337_2_.contains("CustomName", 8)) {
@@ -450,6 +474,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         p_189515_1_.putInt("GildedLevels", this.gildedlevels);
         p_189515_1_.putInt("NightvisionLevels", this.nightvisionlevels);
         p_189515_1_.putInt("SafeVilligarLevels", this.safevilligarlevels);
+        p_189515_1_.putInt("HaybewLevels", this.haybewlevels);
         if (this.name != null) {
             p_189515_1_.putString("CustomName", ITextComponent.Serializer.toJson(this.name));
         }
