@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.tileentity.BeaconTileEntityRenderer;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.monster.ZombifiedPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -164,7 +165,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                 this.applyEffects();
                 this.playSound(SoundEvents.BEACON_AMBIENT);
             }
-            if(this.glowlevels > 0 || this.gildedlevels > 0 || this.nightvisionlevels > 0)
+            if(this.glowlevels > 0 || this.gildedlevels > 0 || this.nightvisionlevels > 0 || this.safevilligarlevels > 0)
             {
                 this.applyCustomEffects();
             }
@@ -238,6 +239,10 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
            {
                blockToCheck = Blocks.SEA_LANTERN;
            }
+           else if(blockUnderBeacon.is(Blocks.CRYING_OBSIDIAN))
+           {
+               blockToCheck = Blocks.CRYING_OBSIDIAN;
+           }
            else
            {
                return;
@@ -271,13 +276,15 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
             }
             else if(blockUnderBeacon.is(Blocks.GILDED_BLACKSTONE))
             {
-                System.out.println(levelsToAdd);
                 this.gildedlevels = levelsToAdd;
             }
             else if(blockUnderBeacon.is(Blocks.SEA_LANTERN))
             {
-                System.out.println(levelsToAdd);
                 this.nightvisionlevels = levelsToAdd;
+            }
+            else if(blockUnderBeacon.is(Blocks.CRYING_OBSIDIAN))
+            {
+                this.safevilligarlevels = levelsToAdd;
             }
         }
 
@@ -339,6 +346,19 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
 
             }
         }
+        else if (this.safevilligarlevels > 0 && !this.level.isClientSide)
+        {
+
+            double d0 = this.levels * 10 + 10;
+            int j = (9 + this.safevilligarlevels * 2) * 20;
+            AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
+
+            List<VillagerEntity> entities = this.level.getEntitiesOfClass(VillagerEntity.class, axisalignedbb);
+            for (VillagerEntity entity : entities)
+            {
+                entity.invulnerableTime = j;
+            }
+        }
     }
 
     private void applyEffects() {
@@ -374,7 +394,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
 
     @OnlyIn(Dist.CLIENT)
     public List<PowerfulBeaconTile.BeamSegment> getBeamSections() {
-        return (List<PowerfulBeaconTile.BeamSegment>)((this.levels == 0 && this.gildedlevels == 0 && this.glowlevels == 0 && this.nightvisionlevels == 0)? ImmutableList.of() : this.beamSections);
+        return (List<PowerfulBeaconTile.BeamSegment>)((this.levels == 0 && this.gildedlevels == 0 && this.glowlevels == 0 && this.nightvisionlevels == 0 && this.safevilligarlevels == 0)? ImmutableList.of() : this.beamSections);
     }
 
     public int getLevels() {
@@ -410,6 +430,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         this.glowlevels = p_230337_2_.getInt("GlowLevels");
         this.gildedlevels = p_230337_2_.getInt("GildedLevels");
         this.nightvisionlevels = p_230337_2_.getInt("NightvisionLevels");
+        this.safevilligarlevels = p_230337_2_.getInt("SafeVilligarLevels");
         this.primaryPower = getValidEffectById(p_230337_2_.getInt("Primary"));
         this.secondaryPower = getValidEffectById(p_230337_2_.getInt("Secondary"));
         if (p_230337_2_.contains("CustomName", 8)) {
@@ -428,6 +449,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         p_189515_1_.putInt("GlowLevels", this.glowlevels);
         p_189515_1_.putInt("GildedLevels", this.gildedlevels);
         p_189515_1_.putInt("NightvisionLevels", this.nightvisionlevels);
+        p_189515_1_.putInt("SafeVilligarLevels", this.safevilligarlevels);
         if (this.name != null) {
             p_189515_1_.putString("CustomName", ITextComponent.Serializer.toJson(this.name));
         }
