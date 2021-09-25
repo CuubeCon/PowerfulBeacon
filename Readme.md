@@ -1,3 +1,4 @@
+http://cf.way2muchnoise.eu/powerful-beacon.svg
 Work in Progess..   
   
 Glowstone Base = Glowing Effect for Living Entities except Players  
