@@ -1,3 +1,5 @@
+[![CurseForge](http://cf.way2muchnoise.eu/full_powerful-beacon_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/powerful-beacon)
+
 Work in Progess..   
   
 Glowstone Base = Glowing Effect for Living Entities except Players  
