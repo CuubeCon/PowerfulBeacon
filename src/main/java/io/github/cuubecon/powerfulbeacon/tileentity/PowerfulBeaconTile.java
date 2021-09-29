@@ -125,26 +125,25 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         int l = this.level.getHeight(Heightmap.Type.WORLD_SURFACE, i, k);
 
         for(int i1 = 0; i1 < 10 && blockpos.getY() <= l; ++i1) {
-
             BlockState blockstate = this.level.getBlockState(blockpos);
             Block block = blockstate.getBlock();
             float[] afloat = blockstate.getBeaconColorMultiplier(this.level, blockpos, getBlockPos());
             if (afloat != null) {
                 if (this.checkingBeamSections.size() <= 1) {
-                    beacontileentity$beamsegment = new PowerfulBeaconTile.BeamSegment(afloat);
+                    beacontileentity$beamsegment = new PowerfulBeaconTile.BeamSegment(afloat, blockpos.getY());
                     this.checkingBeamSections.add(beacontileentity$beamsegment);
                 } else if (beacontileentity$beamsegment != null) {
                     if (Arrays.equals(afloat, beacontileentity$beamsegment.color)) {
                         beacontileentity$beamsegment.increaseHeight();
                     } else {
-                        beacontileentity$beamsegment = new PowerfulBeaconTile.BeamSegment(new float[]{(beacontileentity$beamsegment.color[0] + afloat[0]) / 2.0F, (beacontileentity$beamsegment.color[1] + afloat[1]) / 2.0F, (beacontileentity$beamsegment.color[2] + afloat[2]) / 2.0F});
+                        beacontileentity$beamsegment = new PowerfulBeaconTile.BeamSegment(new float[]{(beacontileentity$beamsegment.color[0] + afloat[0]) / 2.0F, (beacontileentity$beamsegment.color[1] + afloat[1]) / 2.0F, (beacontileentity$beamsegment.color[2] + afloat[2]) / 2.0F}, blockpos.getY());
                         this.checkingBeamSections.add(beacontileentity$beamsegment);
                     }
                 }
             } else {
-                if (beacontileentity$beamsegment == null ||  block != Blocks.AIR  || blockstate.getLightBlock(this.level, blockpos) >= 15 && block != Blocks.BEDROCK) {
+                if (beacontileentity$beamsegment == null ||  (blockstate.getLightBlock(this.level, blockpos) >= 15 && block != Blocks.BEDROCK)) {
                     //this.checkingBeamSections.clear();
-                    //System.out.println("BEAM SIZE" + this.checkingBeamSections.size());
+                    //BeaconTileEntity
                     this.lastCheckY = l;
                     break;
                 }
@@ -169,6 +168,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
             if(this.glowlevels > 0 || this.gildedlevels > 0 || this.nightvisionlevels > 0 || this.safevilligarlevels > 0 || this.haybewlevels > 0 || this.honeyBlockLevels > 0)
             {
                 this.applyCustomEffects();
+                this.playSound(SoundEvents.BEACON_AMBIENT);
             }
         }
 
@@ -225,7 +225,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         BlockState blockUnderBeacon = this.level.getBlockState(new BlockPos(p_213927_1_, p_213927_2_-1, p_213927_3_));
         if(blockUnderBeacon.is(ModTags.Blocks.POWERFUL_BEACON_BASE_BLOCKS))
         {
-            System.out.println(blockUnderBeacon);
+            //System.out.println(blockUnderBeacon);
             Block blockToCheck;
             int levelsToAdd = 0;
            if(blockUnderBeacon.is(Blocks.GLOWSTONE))
@@ -256,7 +256,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
            {
                return;
            }
-            for(int i = 1; i <= 4;  levelsToAdd = i++)
+            for(int i = 1; i <= 8;  levelsToAdd = i++)
             {
                 int j = p_213927_2_ - i;
                 if (j < 0) {
@@ -321,11 +321,11 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
 
     private void applyCustomEffects()
     {
-        System.out.println("GILD LEVELS " + gildedlevels);
+        //System.out.println("GILD LEVELS " + gildedlevels);
         if(this.glowlevels > 0 && !this.level.isClientSide)
         {
            // System.out.println(glowlevels);
-            double d0 = this.levels * 10 + 10;
+            double d0 = this.glowlevels * 10 + 10;
             int j = (9 + this.glowlevels * 2) * 20;
             AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
 
@@ -339,7 +339,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         else if (this.gildedlevels > 0 && !this.level.isClientSide)
         {
 
-            double d0 = this.levels * 10 + 10;
+            double d0 = this.gildedlevels * 10 + 10;
             int j = (9 + this.gildedlevels * 2) * 20;
             AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
 
@@ -352,7 +352,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         else if (this.nightvisionlevels > 0 && !this.level.isClientSide)
         {
 
-            double d0 = this.levels * 10 + 10;
+            double d0 = this.nightvisionlevels * 10 + 10;
             int j = (9 + this.nightvisionlevels * 2) * 20;
             AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
 
@@ -366,7 +366,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         else if (this.safevilligarlevels > 0 && !this.level.isClientSide)
         {
 
-            double d0 = this.levels * 10 + 10;
+            double d0 = this.safevilligarlevels * 10 + 10;
             int j = (9 + this.safevilligarlevels * 2) * 20;
             AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
 
@@ -379,7 +379,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         else if (this.haybewlevels > 0 && !this.level.isClientSide)
         {
 
-            double d0 = this.levels * 10 + 10;
+            double d0 = this.haybewlevels * 10 + 10;
             int j = (9 + this.haybewlevels * 2) * 20;
             AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
 
@@ -392,7 +392,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         else if (this.honeyBlockLevels > 0 && !this.level.isClientSide)
         {
 
-            double d0 = this.levels * 10 + 10;
+            double d0 = this.honeyBlockLevels * 10 + 10;
             int j = (9 + this.honeyBlockLevels * 2) * 20;
             AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
 
@@ -440,6 +440,12 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         return (List<PowerfulBeaconTile.BeamSegment>)((this.levels == 0 && this.gildedlevels == 0 && this.glowlevels == 0 && this.nightvisionlevels == 0 && this.safevilligarlevels == 0 && this.haybewlevels == 0 && this.honeyBlockLevels == 0)? ImmutableList.of() : this.beamSections);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    public boolean isAir(int posY)
+    {
+        BlockPos blockPos = new BlockPos(this.worldPosition.getX(), posY, this.worldPosition.getZ());
+        return this.level.getBlockState(blockPos).is(Blocks.AIR);
+    }
     public int getLevels() {
         return this.levels;
     }
@@ -524,10 +530,12 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
     public static class BeamSegment {
         private final float[] color;
         private int height;
+        private final int posY;
 
-        public BeamSegment(float[] p_i45669_1_) {
+        public BeamSegment(float[] p_i45669_1_, int posY) {
             this.color = p_i45669_1_;
             this.height = 1;
+            this.posY = posY;
         }
 
         protected void increaseHeight() {
@@ -542,6 +550,11 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         @OnlyIn(Dist.CLIENT)
         public int getHeight() {
             return this.height;
+        }
+
+        @OnlyIn(Dist.CLIENT)
+        public int getPosY() {
+            return this.posY+this.height;
         }
     }
 }
