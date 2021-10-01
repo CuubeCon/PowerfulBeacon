@@ -114,7 +114,8 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
             }
 
             if (this.primary != null) {
-                PowerfulBeaconScreen.PowerButton beaconscreen$powerbutton1 = new PowerfulBeaconScreen.PowerButton(this.leftPos + 167 + (k1 - 1) * 24 - l1 / 2, this.topPos + 47, this.primary, false);
+                PowerfulBeaconScreen.PowerButton beaconscreen$powerbutton1 =
+                        new PowerfulBeaconScreen.PowerButton(this.leftPos + 127 + (k1 - 1) * 24 - l1 / 2, this.topPos + 22, this.primary, false);
                 this.addButton(beaconscreen$powerbutton1);
                 if (3 >= i) {
                     beaconscreen$powerbutton1.active = false;
@@ -131,7 +132,7 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
                 beaconscreen$powerbutton3.setSelected(true);
         }
 
-        this.confirmButton.active = this.menu.hasPayment() && this.primary != null;
+        this.confirmButton.active = this.menu.hasPayment() && ( this.primary != null || this.active == 1);
     }
 
     @Override
@@ -230,7 +231,7 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
         }
 
         public void onPress() {
-            PowerfulBeaconPacketHandler.INSTANCE.sendToServer(new cUpdatePowerfulBeaconPacket(Effect.getId(PowerfulBeaconScreen.this.primary), Effect.getId(PowerfulBeaconScreen.this.secondary)));
+            PowerfulBeaconPacketHandler.INSTANCE.sendToServer(new cUpdatePowerfulBeaconPacket(Effect.getId(PowerfulBeaconScreen.this.primary), Effect.getId(PowerfulBeaconScreen.this.secondary), PowerfulBeaconScreen.this.active));
             PowerfulBeaconScreen.this.minecraft.player.connection.send(new CCloseWindowPacket(PowerfulBeaconScreen.this.minecraft.player.containerMenu.containerId));
             PowerfulBeaconScreen.this.minecraft.setScreen((Screen)null);
         }
@@ -239,7 +240,42 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
             PowerfulBeaconScreen.this.renderTooltip(p_230443_1_, DialogTexts.GUI_DONE, p_230443_2_, p_230443_3_);
         }
     }
+    @OnlyIn(Dist.CLIENT)
+    class PowerfulButton extends PowerfulBeaconScreen.Button {
+        private final TextureAtlasSprite sprite;
+        private final ITextComponent tooltip;
 
+        public PowerfulButton(int p_i50827_2_, int p_i50827_3_) {
+            super(p_i50827_2_, p_i50827_3_);
+            this.sprite = Minecraft.getInstance().getMobEffectTextures().get(Effect.byId(5));
+            this.tooltip = this.createTooltip();
+        }
+
+        private ITextComponent createTooltip() {
+            return new TranslationTextComponent("effect.powerfulbeacon.powerful_beacon.power");
+        }
+
+        public void onPress() {
+            if (!this.isSelected())
+                PowerfulBeaconScreen.this.active = 1;
+            else
+                PowerfulBeaconScreen.this.active = 0;
+            PowerfulBeaconScreen.this.buttons.clear();
+            PowerfulBeaconScreen.this.children.clear();
+            PowerfulBeaconScreen.this.init();
+            PowerfulBeaconScreen.this.tick();
+
+        }
+
+        public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_) {
+            PowerfulBeaconScreen.this.renderTooltip(p_230443_1_, this.tooltip, p_230443_2_, p_230443_3_);
+        }
+
+        protected void renderIcon(MatrixStack p_230454_1_) {
+            Minecraft.getInstance().getTextureManager().bind(this.sprite.atlas().location());
+            blit(p_230454_1_, this.x + 2, this.y + 2, this.getBlitOffset(), 18, 18, this.sprite);
+        }
+    }
     @OnlyIn(Dist.CLIENT)
     class PowerButton extends PowerfulBeaconScreen.Button {
         private final Effect effect;

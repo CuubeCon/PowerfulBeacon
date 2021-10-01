@@ -1,5 +1,6 @@
 package io.github.cuubecon.powerfulbeacon.container;
 
+import io.github.cuubecon.powerfulbeacon.util.ModTags;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
@@ -17,7 +18,7 @@ import javax.annotation.Nullable;
 public class PowerfulBeaconContainer  extends Container {
     private final IInventory beacon = new Inventory(1) {
         public boolean canPlaceItem(int p_94041_1_, ItemStack p_94041_2_) {
-            return p_94041_2_.getItem().is(ItemTags.BEACON_PAYMENT_ITEMS);
+            return p_94041_2_.getItem().is(ModTags.Blocks.POWERFUL_BEACON_PAYMENT_ITEMS);
         }
 
         public int getMaxStackSize() {
@@ -151,6 +152,7 @@ public class PowerfulBeaconContainer  extends Container {
         if (this.paymentSlot.hasItem()) {
             this.beaconData.set(1, p_216966_1_);
             this.beaconData.set(2, p_216966_2_);
+            this.beaconData.set(4, active);
             this.paymentSlot.remove(1);
         }
 
@@ -167,7 +169,7 @@ public class PowerfulBeaconContainer  extends Container {
         }
 
         public boolean mayPlace(ItemStack p_75214_1_) {
-            return p_75214_1_.getItem().is(ItemTags.BEACON_PAYMENT_ITEMS);
+            return p_75214_1_.getItem().is(ModTags.Blocks.POWERFUL_BEACON_PAYMENT_ITEMS);
         }
 
         public int getMaxStackSize() {
