@@ -63,6 +63,10 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                     return Effect.getId(PowerfulBeaconTile.this.primaryPower);
                 case 2:
                     return Effect.getId(PowerfulBeaconTile.this.secondaryPower);
+                case 3:
+                    return PowerfulBeaconTile.this.standOnCustomBase? 1 : 0;
+                case 4:
+                    return PowerfulBeaconTile.this.isSuperPowerActive? 1 : 0;
                 default:
                     return 0;
             }
@@ -82,12 +86,17 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                     break;
                 case 2:
                     PowerfulBeaconTile.this.secondaryPower = PowerfulBeaconTile.getValidEffectById(p_221477_2_);
+                case 3:
+                    PowerfulBeaconTile.this.standOnCustomBase = p_221477_2_ == 1;
+                    case 4:
+                    PowerfulBeaconTile.this.isSuperPowerActive = p_221477_2_ == 1;
+
             }
 
         }
 
         public int getCount() {
-            return 3;
+            return 5;
         }
     };
     private int glowlevels = 0;
@@ -96,7 +105,8 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
     private int safevilligarlevels = 0;
     private int haybewlevels = 0;
     private int honeyBlockLevels = 0;
-
+    private boolean isSuperPowerActive = false;
+    private boolean standOnCustomBase = false;
     public PowerfulBeaconTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
@@ -165,7 +175,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                 this.applyEffects();
                 this.playSound(SoundEvents.BEACON_AMBIENT);
             }
-            if(this.glowlevels > 0 || this.gildedlevels > 0 || this.nightvisionlevels > 0 || this.safevilligarlevels > 0 || this.haybewlevels > 0 || this.honeyBlockLevels > 0)
+            if(this.isSuperPowerActive)
             {
                 this.applyCustomEffects();
                 this.playSound(SoundEvents.BEACON_AMBIENT);
@@ -278,6 +288,9 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                     break;
                 }
             }
+            this.standOnCustomBase = levelsToAdd > 0;
+
+            this.levels = levelsToAdd;
 
             if(blockUnderBeacon.is(Blocks.GLOWSTONE))
             {
@@ -437,7 +450,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
 
     @OnlyIn(Dist.CLIENT)
     public List<PowerfulBeaconTile.BeamSegment> getBeamSections() {
-        return (List<PowerfulBeaconTile.BeamSegment>)((this.levels == 0 && this.gildedlevels == 0 && this.glowlevels == 0 && this.nightvisionlevels == 0 && this.safevilligarlevels == 0 && this.haybewlevels == 0 && this.honeyBlockLevels == 0)? ImmutableList.of() : this.beamSections);
+        return (List<PowerfulBeaconTile.BeamSegment>)((this.levels == 0 && !this.isSuperPowerActive)? ImmutableList.of() : this.beamSections);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -450,6 +463,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         return this.levels;
     }
 
+    public boolean getIsSuperPowerActive() { return this.isSuperPowerActive;}
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {

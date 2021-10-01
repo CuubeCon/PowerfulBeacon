@@ -36,10 +36,14 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
     private static final ResourceLocation BEACON_LOCATION = new ResourceLocation(PowerfulBeacon.MODID,"textures/gui/powerful_beacon.png");
     private static final ITextComponent PRIMARY_EFFECT_LABEL = new TranslationTextComponent("block.minecraft.beacon.primary");
     private static final ITextComponent SECONDARY_EFFECT_LABEL = new TranslationTextComponent("block.minecraft.beacon.secondary");
+    private static final ITextComponent POWERFUL_EFFECT_LABEL = new TranslationTextComponent("block.powerfulbeacon.powerful_beacon.power");
+
     private PowerfulBeaconScreen.ConfirmButton confirmButton;
     private boolean initPowerButtons;
     private Effect primary;
     private Effect secondary;
+    private int power;
+    private int active;
 
     public PowerfulBeaconScreen(final PowerfulBeaconContainer p_i51102_1_, PlayerInventory p_i51102_2_, ITextComponent p_i51102_3_) {
         super(p_i51102_1_, p_i51102_2_, p_i51102_3_);
@@ -56,6 +60,8 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
                 PowerfulBeaconScreen.this.primary = p_i51102_1_.getPrimaryEffect();
                 PowerfulBeaconScreen.this.secondary = p_i51102_1_.getSecondaryEffect();
                 PowerfulBeaconScreen.this.initPowerButtons = true;
+                PowerfulBeaconScreen.this.power = p_i51102_1_.isOnCustomBase();
+                PowerfulBeaconScreen.this.active = p_i51102_1_.isActive();
             }
         });
     }
@@ -98,7 +104,7 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
 
             for(int i2 = 0; i2 < k1 - 1; ++i2) {
                 Effect effect1 = BeaconTileEntity.BEACON_EFFECTS[3][i2];
-                PowerfulBeaconScreen.PowerButton beaconscreen$powerbutton2 = new PowerfulBeaconScreen.PowerButton(this.leftPos + 167 + i2 * 24 - l1 / 2, this.topPos + 47, effect1, false);
+                PowerfulBeaconScreen.PowerButton beaconscreen$powerbutton2 = new PowerfulBeaconScreen.PowerButton(this.leftPos + 187 + i2 * 24, this.topPos + 22, effect1, false);
                 this.addButton(beaconscreen$powerbutton2);
                 if (3 >= i) {
                     beaconscreen$powerbutton2.active = false;
@@ -116,6 +122,13 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
                     beaconscreen$powerbutton1.setSelected(true);
                 }
             }
+            PowerfulBeaconScreen.PowerfulButton beaconscreen$powerbutton3 =
+                    new PowerfulBeaconScreen.PowerfulButton(this.leftPos + 86 + 3 * 24, this.topPos + 22 + 2 * 25);
+            this.addButton(beaconscreen$powerbutton3);
+            if(this.power == 0)
+                beaconscreen$powerbutton3.active = false;
+            else if(this.active == 1)
+                beaconscreen$powerbutton3.setSelected(true);
         }
 
         this.confirmButton.active = this.menu.hasPayment() && this.primary != null;
@@ -125,6 +138,7 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
     protected void renderLabels(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
         drawCenteredString(p_230451_1_, this.font, PRIMARY_EFFECT_LABEL, 62, 10, 14737632);
         drawCenteredString(p_230451_1_, this.font, SECONDARY_EFFECT_LABEL, 169, 10, 14737632);
+        drawCenteredString(p_230451_1_, this.font, POWERFUL_EFFECT_LABEL, 169, 50, 14737632);
 
         for(Widget widget : this.buttons) {
             if (widget.isHovered()) {
@@ -144,13 +158,12 @@ public class PowerfulBeaconScreen extends ContainerScreen<PowerfulBeaconContaine
         this.blit(p_230450_1_, i, j, 0, 0, this.imageWidth, this.imageHeight);
         this.itemRenderer.blitOffset = 100.0F;
         this.itemRenderer.renderAndDecorateItem(new ItemStack(Items.NETHERITE_INGOT), i + 20, j + 109);
-        this.itemRenderer.renderAndDecorateItem(new ItemStack(Items.EMERALD), i + 41, j + 109);
-        this.itemRenderer.renderAndDecorateItem(new ItemStack(Items.DIAMOND), i + 41 + 22, j + 109);
-        this.itemRenderer.renderAndDecorateItem(new ItemStack(Items.GOLD_INGOT), i + 42 + 44, j + 109);
-        this.itemRenderer.renderAndDecorateItem(new ItemStack(Items.IRON_INGOT), i + 42 + 66, j + 109);
+        this.itemRenderer.renderAndDecorateItem(new ItemStack(Items.EMERALD_BLOCK), i + 41, j + 109);
+        this.itemRenderer.renderAndDecorateItem(new ItemStack(Items.DIAMOND_BLOCK), i + 41 + 22, j + 109);
+        this.itemRenderer.renderAndDecorateItem(new ItemStack(Items.NETHER_STAR), i + 42 + 44, j + 109);
         this.itemRenderer.blitOffset = 0.0F;
     }
-
+//tese
     @Override
     public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
         this.renderBackground(p_230430_1_);

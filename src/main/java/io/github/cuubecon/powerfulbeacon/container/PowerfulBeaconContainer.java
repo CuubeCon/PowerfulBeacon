@@ -7,7 +7,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,6 +35,7 @@ public class PowerfulBeaconContainer  extends Container {
 
         this.access = access;
         this.beaconData = beaconData;
+        System.out.println(beaconData.getCount());
         this.addSlot(this.paymentSlot);
         this.addDataSlots(beaconData);
         int i = 36;
@@ -137,7 +137,17 @@ public class PowerfulBeaconContainer  extends Container {
         return Effect.byId(this.beaconData.get(2));
     }
 
-    public void updateEffects(int p_216966_1_, int p_216966_2_) {
+    @OnlyIn(Dist.CLIENT)
+    public int isOnCustomBase() {
+        return this.beaconData.get(3);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public int isActive() {
+        return this.beaconData.get(4);
+    }
+
+    public void updateEffects(int p_216966_1_, int p_216966_2_, int active) {
         if (this.paymentSlot.hasItem()) {
             this.beaconData.set(1, p_216966_1_);
             this.beaconData.set(2, p_216966_2_);

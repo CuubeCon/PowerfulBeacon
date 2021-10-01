@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:netherite_ingot",
+    "minecraft:emerald_block",
+    "minecraft:diamond_block",
+    "minecraft:nether_star"
+  ]
+}

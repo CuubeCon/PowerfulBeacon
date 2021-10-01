@@ -3,5 +3,7 @@
   "screen.powerfulbeacon.powerful_beacon": "Powerful Beacon",
   "container.powerfulbeacon.powerful_beacon" : "Powerful Beacon",
   "advancements.nether.create_powerful_beacon.title" : "A Beacon, just better",
-  "advancements.nether.create_powerful_beacon.description": "Construct and Place a Powerful Beacon"
+  "advancements.nether.create_powerful_beacon.description": "Construct and Place a Powerful Beacon",
+  "block.powerfulbeacon.powerful_beacon.power" : "Powerful Power",
+  "effect.powerfulbeacon.powerful_beacon.power" : "Extra Power"
 }

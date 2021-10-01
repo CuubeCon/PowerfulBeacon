@@ -18,7 +18,8 @@ public class ModContainers {
     public static final DeferredRegister<ContainerType<?>> CONTAINER_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, PowerfulBeacon.MODID);
 
     public static final RegistryObject<ContainerType<PowerfulBeaconContainer>> POWERFUL_BEACON_CONTAINER =
-            CONTAINER_TYPES.register("powerful_beacon_container", () -> IForgeContainerType.create(((windowId, inv, data) -> new PowerfulBeaconContainer(windowId, inv, IWorldPosCallable.NULL, new IntArray(3)))));
+            CONTAINER_TYPES.register("powerful_beacon_container",
+                    () -> IForgeContainerType.create(((windowId, inv, data) -> new PowerfulBeaconContainer(windowId, inv, IWorldPosCallable.NULL, new IntArray(5)))));
 
     public static void register(IEventBus eventBus)
     {
