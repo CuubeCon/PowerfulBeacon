@@ -2,7 +2,8 @@
 
 This Mod adds a new Block called Powerful Beacon. It is basiclly a Minecraft Beacon, but you can use other base blocks for an additional effect.
 
- 
+ ![image](https://user-images.githubusercontent.com/31128047/135720608-f84e236c-f7db-44ef-9859-7cac1767fb15.png)
+
 
  
 
