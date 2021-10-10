@@ -236,36 +236,9 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         if(blockUnderBeacon.is(ModTags.Blocks.POWERFUL_BEACON_BASE_BLOCKS))
         {
             //System.out.println(blockUnderBeacon);
-            Block blockToCheck;
+            
             int levelsToAdd = 0;
-           if(blockUnderBeacon.is(Blocks.GLOWSTONE))
-           {
-                blockToCheck = Blocks.GLOWSTONE;
-           }
-           else if(blockUnderBeacon.is(Blocks.GILDED_BLACKSTONE))
-           {
-                blockToCheck = Blocks.GILDED_BLACKSTONE;
-           }
-           else if(blockUnderBeacon.is(Blocks.SEA_LANTERN))
-           {
-               blockToCheck = Blocks.SEA_LANTERN;
-           }
-           else if(blockUnderBeacon.is(Blocks.CRYING_OBSIDIAN))
-           {
-               blockToCheck = Blocks.CRYING_OBSIDIAN;
-           }
-           else if(blockUnderBeacon.is(Blocks.HAY_BLOCK))
-           {
-               blockToCheck = Blocks.HAY_BLOCK;
-           }
-           else if(blockUnderBeacon.is(Blocks.HONEY_BLOCK))
-           {
-               blockToCheck = Blocks.HONEY_BLOCK;
-           }
-           else
-           {
-               return;
-           }
+
             for(int i = 1; i <= 8;  levelsToAdd = i++)
             {
                 int j = p_213927_2_ - i;
@@ -277,7 +250,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
 
                 for(int k = p_213927_1_ - i; k <= p_213927_1_ + i && flag; ++k) {
                     for(int l = p_213927_3_ - i; l <= p_213927_3_ + i; ++l) {
-                        if (!this.level.getBlockState(new BlockPos(k, j, l)).is(blockToCheck)) {
+                        if (!this.level.getBlockState(new BlockPos(k, j, l)).is(blockUnderBeacon.getBlock())) {
                             flag = false;
                             break;
                         }
