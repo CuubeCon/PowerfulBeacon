@@ -13,7 +13,8 @@ Currently implemented base Blocks:
 - Sea Lantern: Nightvision effect  
 - Crying Obsidian: Villigers in Range are invulnerable  
 - Hay Block: Saturation Effect  
-- Honey Block: Slow Falling Effect  
+- Honey Block: Slow Falling Effect 
+- Bookshelf: Hero of the village Effect  
  
 
 more cooming soon, feel free to share your ideas :)
