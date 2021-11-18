@@ -14,7 +14,8 @@ Currently implemented base Blocks:
 - Crying Obsidian: Villigers in Range are invulnerable  
 - Hay Block: Saturation Effect  
 - Honey Block: Slow Falling Effect 
-- Bookshelf: Hero of the village Effect  
+- Bookshelf: Hero of the village Effect 
+- Prismarine Bricks: Dolphin Grace  
  
 
 more cooming soon, feel free to share your ideas :)

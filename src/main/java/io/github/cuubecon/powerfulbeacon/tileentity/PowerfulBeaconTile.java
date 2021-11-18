@@ -106,6 +106,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
     private int haybewlevels = 0;
     private int honeyBlockLevels = 0;
     private int bookshelfLevels = 0;
+    private int prismarinebrickLevels = 0;
     private boolean isSuperPowerActive = false;
     private boolean standOnCustomBase = false;
     public PowerfulBeaconTile(TileEntityType<?> tileEntityTypeIn) {
@@ -294,6 +295,10 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
             {
                 this.bookshelfLevels = levelsToAdd;
             }
+            else if(blockUnderBeacon.is(Blocks.PRISMARINE_BRICKS))
+            {
+                this.prismarinebrickLevels = levelsToAdd;
+            }
         }
 
     }
@@ -406,6 +411,19 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
                 entity.addEffect(new EffectInstance(Effects.HERO_OF_THE_VILLAGE,j, 0, true,true));
             }
         }
+        else if (this.prismarinebrickLevels > 0 && !this.level.isClientSide)
+        {
+
+            double d0 = this.prismarinebrickLevels * 10 + 10;
+            int j = (9 + this.prismarinebrickLevels * 2) * 20;
+            AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.worldPosition)).inflate(d0).expandTowards(0.0D, (double)this.level.getMaxBuildHeight(), 0.0D);
+
+            List<PlayerEntity> entities = this.level.getEntitiesOfClass(PlayerEntity.class, axisalignedbb);
+            for (PlayerEntity entity : entities)
+            {
+                entity.addEffect(new EffectInstance(Effects.DOLPHINS_GRACE,j, 0, true,true));
+            }
+        }
     }
 
     private void applyEffects() {
@@ -488,6 +506,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         this.haybewlevels = p_230337_2_.getInt("HaybewLevels");
         this.honeyBlockLevels = p_230337_2_.getInt("HoneyBlockLevels");
         this.bookshelfLevels = p_230337_2_.getInt("BookshelfLevels");
+        this.prismarinebrickLevels = p_230337_2_.getInt("PrismarineBrickLevels");
 
         this.primaryPower = getValidEffectById(p_230337_2_.getInt("Primary"));
         this.secondaryPower = getValidEffectById(p_230337_2_.getInt("Secondary"));
@@ -511,6 +530,7 @@ public class PowerfulBeaconTile  extends TileEntity implements ITickableTileEnti
         p_189515_1_.putInt("HaybewLevels", this.haybewlevels);
         p_189515_1_.putInt("HoneyBlockLevels", this.honeyBlockLevels);
         p_189515_1_.putInt("BookshelfLevels", this.bookshelfLevels);
+        p_189515_1_.putInt("PrismarineBrickLevels", this.prismarinebrickLevels);
 
         if (this.name != null) {
             p_189515_1_.putString("CustomName", ITextComponent.Serializer.toJson(this.name));
